@@ -1,11 +1,11 @@
 const initialCards = [
     {
       name: "Архыз",
-      link: "https://as2.ftcdn.net/v2/jpg/05/43/61/87/1000_F_543618781_3S3Pjuufrn8H6E15LO5ruuIxBjMmPd9r.jpg",
+      link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
     },
     {
       name: "Челябинская область",
-      link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg",
+      link: "https://as1.ftcdn.net/v2/jpg/02/15/35/14/1000_F_215351426_I7WB3joCwXLwyAKvFtTBv3Ptv00OkXis.jpg",
     },
     {
       name: "Иваново",
