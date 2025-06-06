@@ -30,8 +30,9 @@ const placeNameInput = popupNewCard.querySelector('.popup__input_type_card-name'
 const placeLinkInput = popupNewCard.querySelector('.popup__input_type_url');
 
 
-const logo = document.querySelector('.header__logo').src = logoPath;
-const profileImage = document.querySelector('.profile__image').style.backgroundImage = `url(${avatarPath})`;
+document.querySelector('.header__logo').src = logoPath;
+document.querySelector('.profile__image').style.backgroundImage = `url(${avatarPath})`;
+
 
 // Закрытие попапов по клику на оверлей или крестику
 popups.forEach(popup => {

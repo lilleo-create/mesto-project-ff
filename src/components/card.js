@@ -1,6 +1,7 @@
 export function createCard(data, handleDeleteCard, handleLikeClick, handleImageClick) {
   const cardTemplate = document.querySelector('#card-template').content;
-  const cardElement = cardTemplate.cloneNode(true);
+  const cardElement = cardTemplate.cloneNode(true).querySelector('.card');
+
 
   const cardImage = cardElement.querySelector('.card__image');
   const likeButton = cardElement.querySelector('.card__like-button');
@@ -12,7 +13,7 @@ export function createCard(data, handleDeleteCard, handleLikeClick, handleImageC
   title.textContent = data.name;
 
   likeButton.addEventListener('click', () => {
-    handleLikeClick(likeButton); // 👈 тут имя аргумента должно совпадать
+    handleLikeClick(likeButton);
   });
 
   deleteButton.addEventListener('click', () => {
