@@ -1,6 +1,6 @@
 function closeByEsc(evt) {
   if (evt.key === 'Escape') {
-    const openedPopup = document.querySelector('.popup_opened');
+    const openedPopup = document.querySelector('.popup_is-opened');
     if (openedPopup) {
       closeModal(openedPopup);
     }
