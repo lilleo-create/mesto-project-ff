@@ -6,6 +6,7 @@ import { createCard, handleDeleteCard, handleLikeClick } from './components/card
 import { openModal, closeModal } from './components/modal.js';
 import logoPath from './images/logo.svg';
 import avatarPath from './images/avatar.jpg';
+import { enableValidation, clearValidation } from './components/validation.js';
 
 
 
@@ -36,6 +37,15 @@ const placeLinkInput = popupNewCard.querySelector('.popup__input_type_url');
 
 document.querySelector('.header__logo').src = logoPath;
 document.querySelector('.profile__image').style.backgroundImage = `url(${avatarPath})`;
+
+enableValidation({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+});
 
 
 initialCards.forEach((cardData) => {
@@ -83,9 +93,17 @@ editProfileForm.addEventListener('submit', handleProfileSubmit);
 profileEditButton.addEventListener('click', () => {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
-
+  clearValidation(editProfileForm, {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+  });
   openModal(popupEdit);
 });
+
 
 
 //Обработчик добавления карточки
