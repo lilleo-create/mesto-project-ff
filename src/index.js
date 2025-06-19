@@ -1,12 +1,13 @@
+// Обработчик сабмита
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import './pages/index.css';
-import { initialCards } from './scripts/cards.js';
 import { createCard, handleDeleteCard, handleLikeClick } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
 import logoPath from './images/logo.svg';
-import avatarPath from './images/avatar.jpg';
 import { enableValidation, clearValidation } from './components/validation.js';
+import { getUserInfo, getInitialCards, updateUserInfo, addCard, likeCard, unlikeCard } from './components/api.js';
+
 
 
 
@@ -36,7 +37,45 @@ const placeLinkInput = popupNewCard.querySelector('.popup__input_type_url');
 
 
 document.querySelector('.header__logo').src = logoPath;
-document.querySelector('.profile__image').style.backgroundImage = `url(${avatarPath})`;
+
+let userId;
+
+function handleLikeToggle(cardId, isLiked) {
+  return isLiked ? unlikeCard(cardId) : likeCard(cardId);
+}
+
+function wrappedLikeClick(likeBtn, cardId, likeCounter, isLiked) {
+  return handleLikeClick(likeBtn, cardId, likeCounter, isLiked, handleLikeToggle);
+}
+
+Promise.all([getUserInfo(), getInitialCards()])
+  .then(([userData, cards]) => {
+    // Запоминаем ID пользователя
+    userId = userData._id;
+
+    // Отображаем имя, описание и аватар
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    document.querySelector('.profile__image').style.backgroundImage = `url(${userData.avatar})`;
+
+    // Рендерим карточки 
+    cards.forEach(cardData => {
+      const cardElement = createCard(
+        cardData,
+        handleDeleteCard,
+        wrappedLikeClick,
+        openImagePopup,
+        userId
+      );
+        placesList.append(cardElement);
+    });
+
+
+  })
+  .catch((err) => {
+    console.error('Ошибка при загрузке данных с сервера:', err);
+  });
+
 
 enableValidation({
   formSelector: '.popup__form',
@@ -45,12 +84,6 @@ enableValidation({
   inactiveButtonClass: 'popup__button_disabled',
   inputErrorClass: 'popup__input_type_error',
   errorClass: 'popup__error_visible'
-});
-
-
-initialCards.forEach((cardData) => {
-  const card = createCard(cardData, handleDeleteCard, handleLikeClick, openImagePopup);
-  placesList.appendChild(card);
 });
 
 
@@ -81,12 +114,21 @@ function openImagePopup({ name, link }) {
 function handleProfileSubmit(evt) {
   evt.preventDefault();
 
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
+  const userData = {
+    name: nameInput.value,
+    about: jobInput.value
+  };
 
-  closeModal(popupEdit);
+  updateUserInfo(userData)
+    .then((updatedUser) => {
+      profileTitle.textContent = updatedUser.name;
+      profileDescription.textContent = updatedUser.about;
+      closeModal(popupEdit);
+    })
+    .catch((err) => {
+      console.error('Ошибка при обновлении профиля:', err);
+    });
 }
-editProfileForm.addEventListener('submit', handleProfileSubmit);
 
 
 //Данные из профиля в импуты
@@ -109,20 +151,41 @@ profileEditButton.addEventListener('click', () => {
 //Обработчик добавления карточки
 function handleNewCardSubmit(evt) {
   evt.preventDefault();
+
   const newCardData = {
     name: placeNameInput.value,
     link: placeLinkInput.value
   };
 
-  const newCard = createCard(newCardData, handleDeleteCard, handleLikeClick, openImagePopup);
-  placesList.prepend(newCard);
-  newCardForm.reset();
-  closeModal(popupNewCard);
+  addCard(newCardData)
+    .then((cardFromServer) => {
+      const newCard = createCard(
+        cardFromServer,
+        handleDeleteCard,
+        wrappedLikeClick,
+        openImagePopup,
+        userId
+      );
+
+
+      placesList.prepend(newCard);
+      newCardForm.reset();
+      clearValidation(newCardForm, {
+        formSelector: '.popup__form',
+        inputSelector: '.popup__input',
+        submitButtonSelector: '.popup__button',
+        inactiveButtonClass: 'popup__button_disabled',
+        inputErrorClass: 'popup__input_type_error',
+        errorClass: 'popup__error_visible'
+      });
+      closeModal(popupNewCard);
+    })
+    .catch((err) => {
+      console.error('Ошибка при добавлении карточки:', err);
+    });
 }
+editProfileForm.addEventListener('submit', handleProfileSubmit);
+
+
 newCardForm.addEventListener('submit', handleNewCardSubmit);
-
-
-
-
-
 
