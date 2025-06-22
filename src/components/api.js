@@ -71,3 +71,11 @@ export function unlikeCard(cardId) {
   }).then(checkResponse);
 }
 
+export function updateUserAvatar(avatarUrl) {
+  return fetch(`${baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ avatar: avatarUrl })
+  }).then(checkResponse);
+}
+

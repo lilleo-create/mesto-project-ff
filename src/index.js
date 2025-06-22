@@ -1,3 +1,4 @@
+
 // Обработчик сабмита
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -6,7 +7,8 @@ import { createCard, handleDeleteCard, handleLikeClick } from './components/card
 import { openModal, closeModal } from './components/modal.js';
 import logoPath from './images/logo.svg';
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getUserInfo, getInitialCards, updateUserInfo, addCard, likeCard, unlikeCard } from './components/api.js';
+import { getUserInfo, getInitialCards, updateUserInfo, addCard, likeCard, unlikeCard, updateUserAvatar } from './components/api.js';
+
 
 
 
@@ -16,6 +18,12 @@ import { getUserInfo, getInitialCards, updateUserInfo, addCard, likeCard, unlike
 const placesList = document.querySelector('.places__list');
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
+const avatarImage = document.querySelector('.profile__image');
+const avatarEditButton = document.querySelector('.profile__image-edit');
+const avatarForm = document.querySelector('[name="avatar-form"]');
+const avatarInput = avatarForm.querySelector('.popup__input_type_avatar');
+const popupAvatar = document.querySelector('.popup_type_avatar');
+
 
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupNewCard = document.querySelector('.popup_type_new-card');
@@ -24,14 +32,16 @@ const popups = document.querySelectorAll('.popup');
 const popupImageEl = popupImage.querySelector('.popup__image');
 const popupCaption = popupImage.querySelector('.popup__caption');
 const editProfileForm = popupEdit.querySelector('.popup__form');
+const newCardForm = popupNewCard.querySelector('.popup__form');
+
 const nameInput = popupEdit.querySelector('.popup__input_type_name');
 const jobInput = popupEdit.querySelector('.popup__input_type_description');
+
 
 
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 
-const newCardForm = popupNewCard.querySelector('.popup__form');
 const placeNameInput = popupNewCard.querySelector('.popup__input_type_card-name');
 const placeLinkInput = popupNewCard.querySelector('.popup__input_type_url');
 
@@ -56,7 +66,7 @@ Promise.all([getUserInfo(), getInitialCards()])
     // Отображаем имя, описание и аватар
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
-    document.querySelector('.profile__image').style.backgroundImage = `url(${userData.avatar})`;
+    avatarImage.style.backgroundImage = `url(${userData.avatar})`;
 
     // Рендерим карточки 
     cards.forEach(cardData => {
@@ -77,14 +87,15 @@ Promise.all([getUserInfo(), getInitialCards()])
   });
 
 
-enableValidation({
+const config = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
   submitButtonSelector: '.popup__button',
   inactiveButtonClass: 'popup__button_disabled',
   inputErrorClass: 'popup__input_type_error',
   errorClass: 'popup__error_visible'
-});
+};
+
 
 
 // Закрытие попапов по клику на оверлей или крестику
@@ -147,6 +158,26 @@ profileEditButton.addEventListener('click', () => {
 });
 
 
+function handleAvatarSubmit(evt) {
+  evt.preventDefault();
+  updateUserAvatar(avatarInput.value)
+    .then((res) => {
+      avatarImage.style.backgroundImage = `url(${res.avatar})`;
+      closeModal(popupAvatar);
+      avatarForm.reset();
+    })
+    .catch((err) => {
+      console.error('Ошибка при обновлении аватара:', err);
+    });
+}
+avatarEditButton.addEventListener('click', () => {
+  clearValidation(avatarForm, config);
+  openModal(popupAvatar);
+});
+
+avatarForm.addEventListener('submit', handleAvatarSubmit);
+
+
 
 //Обработчик добавления карточки
 function handleNewCardSubmit(evt) {
@@ -188,4 +219,5 @@ editProfileForm.addEventListener('submit', handleProfileSubmit);
 
 
 newCardForm.addEventListener('submit', handleNewCardSubmit);
+
 

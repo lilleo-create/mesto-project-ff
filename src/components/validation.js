@@ -32,11 +32,8 @@ function checkInputValidity(form, input, settings) {
   // очищаем кастомную ошибку перед проверками
   input.setCustomValidity('');
 
-  // 1. если поле пустое — не задаём кастомную ошибку (browser default)
   if (input.validity.valueMissing) {
-    // ничего не делаем: остаётся стандартное "Заполните это поле"
   }
-  // 2. если поле с regexp и значение НЕ проходит проверку — кастомная ошибка
   else if (
     ['name', 'place-name', 'description'].includes(input.name) &&
     !regex.test(input.value)
@@ -93,3 +90,5 @@ export function clearValidation(form, settings) {
   button.disabled = true;
   button.classList.add(settings.inactiveButtonClass);
 }
+
+

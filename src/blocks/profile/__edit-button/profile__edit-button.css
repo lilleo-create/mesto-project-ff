@@ -16,6 +16,41 @@
   margin: 0;
 }
 
+.profile__image-edit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
+  background: url('../../../images/edit-icon.svg') no-repeat center;
+  background-size: contain;
+  border: none;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.profile__image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.profile__image:hover::before {
+  opacity: 1;
+}
+
+.profile__image:hover .profile__image-edit {
+  opacity: 1;
+}
+
 .profile__edit-button:hover {
   opacity: 0.6;
 }
