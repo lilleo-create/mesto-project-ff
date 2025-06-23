@@ -12,7 +12,6 @@ module.exports = {
     filename: 'main.js',
     publicPath: '',
   },
-  mode: 'development',
   devServer: {
     open: true,
     port: 8080,

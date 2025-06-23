@@ -14,14 +14,12 @@ import {
   likeCard,
   unlikeCard,
   updateUserAvatar,
-  deleteCardFromServer
 } from './components/api.js';
 
 // DOM
 const placesList = document.querySelector('.places__list');
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
-const avatarEditButton = document.querySelector('.profile__image-edit');
 const avatarImage = document.querySelector('.profile__image');
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupNewCard = document.querySelector('.popup_type_new-card');
@@ -81,36 +79,54 @@ function openImagePopup({ name, link }) {
 
 function handleProfileSubmit(evt) {
   evt.preventDefault();
+  const submitButton = editProfileForm.querySelector('.popup__button');
+  renderLoading(true, submitButton);
+
   const userData = {
     name: nameInput.value,
     about: jobInput.value
   };
+
   updateUserInfo(userData)
     .then((updatedUser) => {
       profileTitle.textContent = updatedUser.name;
       profileDescription.textContent = updatedUser.about;
       closeModal(popupEdit);
     })
-    .catch((err) => console.error('Ошибка при обновлении профиля:', err));
+    .catch((err) => console.error('Ошибка при обновлении профиля:', err))
+    .finally(() => {
+      renderLoading(false, submitButton);
+    });
 }
 
 function handleAvatarSubmit(evt) {
   evt.preventDefault();
+  const submitButton = avatarForm.querySelector('.popup__button');
+  renderLoading(true, submitButton);
+
   updateUserAvatar(avatarInput.value)
     .then((res) => {
       avatarImage.style.backgroundImage = `url(${res.avatar})`;
       closeModal(popupAvatar);
       avatarForm.reset();
     })
-    .catch((err) => console.error('Ошибка при обновлении аватара:', err));
+    .catch((err) => console.error('Ошибка при обновлении аватара:', err))
+    .finally(() => {
+      renderLoading(false, submitButton);
+    });
 }
+
 
 function handleNewCardSubmit(evt) {
   evt.preventDefault();
+  const submitButton = newCardForm.querySelector('.popup__button');
+  renderLoading(true, submitButton);
+
   const newCardData = {
     name: placeNameInput.value,
     link: placeLinkInput.value
   };
+
   addCard(newCardData)
     .then((cardFromServer) => {
       const newCard = createCard(
@@ -127,8 +143,16 @@ function handleNewCardSubmit(evt) {
       clearValidation(newCardForm, config);
       closeModal(popupNewCard);
     })
-    .catch((err) => console.error('Ошибка при добавлении карточки:', err));
+    .catch((err) => console.error('Ошибка при добавлении карточки:', err))
+    .finally(() => {
+      renderLoading(false, submitButton);
+    });
 }
+
+function renderLoading(isLoading, button, defaultText = 'Сохранить') {
+  button.textContent = isLoading ? 'Сохранение...' : defaultText;
+}
+
 
 profileEditButton.addEventListener('click', () => {
   nameInput.value = profileTitle.textContent;
@@ -143,11 +167,20 @@ profileAddButton.addEventListener('click', () => {
   openModal(popupNewCard);
 });
 
-avatarEditButton.addEventListener('click', () => {
+avatarImage.addEventListener('click', () => {
   avatarForm.reset();
   clearValidation(avatarForm, config);
   openModal(popupAvatar);
 });
+
+
+document.querySelectorAll('.popup__close').forEach((closeBtn) => {
+  closeBtn.addEventListener('click', (evt) => {
+    const popup = evt.target.closest('.popup');
+    closeModal(popup);
+  });
+});
+
 
 const config = {
   formSelector: '.popup__form',
