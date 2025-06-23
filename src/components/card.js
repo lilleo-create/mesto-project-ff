@@ -6,7 +6,8 @@ export function createCard(
   handleLikeClick,
   handleImageClick,
   currentUserId,
-  onLikeToggle
+  onLikeToggle,
+  openConfirmPopup
 ) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.cloneNode(true).querySelector('.card');
@@ -19,19 +20,26 @@ export function createCard(
   const title = cardElement.querySelector('.card__title');
   const likeCount = cardElement.querySelector('.card__like-count');
 
+  // Установка данных
   cardImage.src = data.link;
   cardImage.alt = data.name;
   title.textContent = data.name;
   likeCount.textContent = data.likes.length;
 
+  // Отметка лайка
   const isLikedByUser = data.likes.some((user) => user._id === currentUserId);
-if (isLikedByUser) {
-  likeButton.classList.add('card__like-button_is-active');
-}
+  if (isLikedByUser) {
+    likeButton.classList.add('card__like-button_is-active');
+  }
 
-
-  // Удаление кнопки
-  if (data.owner._id !== currentUserId) {
+  // Показ/скрытие кнопки удаления и добавление обработчика
+  if (data.owner._id === currentUserId) {
+    deleteButton.addEventListener('click', () => {
+      openConfirmPopup(() => {
+        handleDeleteCard(data._id, cardElement);
+      });
+    });
+  } else {
     deleteButton.style.display = 'none';
   }
 
@@ -46,11 +54,6 @@ if (isLikedByUser) {
     );
   });
 
-  // Обработчик удаления
-  deleteButton.addEventListener('click', () => {
-    handleDeleteCard(cardElement);
-  });
-
   // Открытие изображения
   cardImage.addEventListener('click', () => {
     handleImageClick(data);
@@ -59,9 +62,8 @@ if (isLikedByUser) {
   return cardElement;
 }
 
-export function handleDeleteCard(cardElement) {
-  const cardId = cardElement.dataset.cardId;
-
+// Удаление карточки с сервера и из DOM
+export function handleDeleteCard(cardId, cardElement) {
   deleteCardFromServer(cardId)
     .then(() => {
       cardElement.remove();
@@ -71,6 +73,7 @@ export function handleDeleteCard(cardElement) {
     });
 }
 
+// Лайк карточки
 export function handleLikeClick(
   likeButton,
   cardId,

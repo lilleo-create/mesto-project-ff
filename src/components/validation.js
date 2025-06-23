@@ -29,19 +29,17 @@ function hideInputError(form, input, settings) {
 function checkInputValidity(form, input, settings) {
   const regex = /^[A-Za-zА-Яа-яЁё\s\-]+$/;
 
-  // очищаем кастомную ошибку перед проверками
   input.setCustomValidity('');
 
   if (input.validity.valueMissing) {
-  }
-  else if (
+    input.setCustomValidity('Поле обязательно');
+  } else if (
     ['name', 'place-name', 'description'].includes(input.name) &&
     !regex.test(input.value)
   ) {
     input.setCustomValidity(input.dataset.error || 'Недопустимые символы');
   }
 
-  // 3. показываем ошибку, если поле всё ещё невалидно
   if (!input.validity.valid) {
     showInputError(form, input, settings);
     return false;
@@ -50,8 +48,6 @@ function checkInputValidity(form, input, settings) {
   hideInputError(form, input, settings);
   return true;
 }
-
-
 
 function toggleButtonState(inputs, button, settings) {
   const hasInvalid = inputs.some((input) => !input.validity.valid);
@@ -85,10 +81,6 @@ export function clearValidation(form, settings) {
   const button = form.querySelector(settings.submitButtonSelector);
 
   inputs.forEach((input) => hideInputError(form, input, settings));
-
-  // Сброс кнопки
   button.disabled = true;
   button.classList.add(settings.inactiveButtonClass);
 }
-
-
