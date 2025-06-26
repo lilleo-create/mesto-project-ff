@@ -1,4 +1,17 @@
 {
+  "name": "mesto-project-ff",
+  "version": "1.0.0",
+  "homepage": "https://lilleo-create.github.io/mesto-project-ff",
+  "scripts": {
+    "start": "webpack serve --mode development --open",
+    "build": "webpack --mode production",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "core-js": "^3.42.0",
+    "regenerator-runtime": "^0.14.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.27.4",
     "@babel/preset-env": "^7.27.2",
@@ -13,18 +26,6 @@
     "postcss-loader": "^8.1.1",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.2",
-    "homepage": "https://lilleo-create.github.io/mesto-project-ff",
-  },
-  "scripts": {
-  "start": "webpack serve --mode development --open",
-  "build": "webpack --mode production",
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d dist"
-  },
-
-  "dependencies": {
-    "core-js": "^3.42.0",
-    "regenerator-runtime": "^0.14.1"
+    "webpack-dev-server": "^5.2.2"
   }
 }
