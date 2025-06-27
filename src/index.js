@@ -42,6 +42,7 @@ const popupImageEl = popupImage.querySelector('.popup__image');
 const popupCaption = popupImage.querySelector('.popup__caption');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const popups = document.querySelectorAll('.popup');
 
 document.querySelector('.header__logo').src = logoPath;
 
@@ -79,8 +80,8 @@ function openImagePopup({ name, link }) {
 
 function handleProfileSubmit(evt) {
   evt.preventDefault();
-  const submitButton = editProfileForm.querySelector('.popup__button');
-  renderLoading(true, submitButton);
+  const button = evt.submitter;
+  renderLoading(true, button);
 
   const userData = {
     name: nameInput.value,
@@ -95,14 +96,14 @@ function handleProfileSubmit(evt) {
     })
     .catch((err) => console.error('Ошибка при обновлении профиля:', err))
     .finally(() => {
-      renderLoading(false, submitButton);
+      renderLoading(false, button);
     });
 }
 
 function handleAvatarSubmit(evt) {
   evt.preventDefault();
-  const submitButton = avatarForm.querySelector('.popup__button');
-  renderLoading(true, submitButton);
+  const button = evt.submitter;
+  renderLoading(true, button);
 
   updateUserAvatar(avatarInput.value)
     .then((res) => {
@@ -112,15 +113,15 @@ function handleAvatarSubmit(evt) {
     })
     .catch((err) => console.error('Ошибка при обновлении аватара:', err))
     .finally(() => {
-      renderLoading(false, submitButton);
+      renderLoading(false, button);
     });
 }
 
 
 function handleNewCardSubmit(evt) {
   evt.preventDefault();
-  const submitButton = newCardForm.querySelector('.popup__button');
-  renderLoading(true, submitButton);
+  const button = evt.submitter;
+  renderLoading(true, button);
 
   const newCardData = {
     name: placeNameInput.value,
@@ -145,7 +146,7 @@ function handleNewCardSubmit(evt) {
     })
     .catch((err) => console.error('Ошибка при добавлении карточки:', err))
     .finally(() => {
-      renderLoading(false, submitButton);
+      renderLoading(false, button);
     });
 }
 
@@ -178,6 +179,14 @@ document.querySelectorAll('.popup__close').forEach((closeBtn) => {
   closeBtn.addEventListener('click', (evt) => {
     const popup = evt.target.closest('.popup');
     closeModal(popup);
+  });
+});
+
+popups.forEach((popup) => {
+  popup.addEventListener('mousedown', (evt) => {
+    if (evt.target === popup) {
+      closeModal(popup);
+    }
   });
 });
 

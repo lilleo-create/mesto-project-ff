@@ -7,12 +7,8 @@ const headers = {
   'Content-Type': 'application/json'
 };
 
-// Проверка ответа от сервера
-function checkResponse(response) {
-  if (response.ok) {
-    return response.json();
-  }
-  return Promise.reject(`Ошибка: ${response.status}`);
+const handleResponse = (res) => {
+  return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
 };
 
 // Получение данных пользователя
@@ -20,7 +16,7 @@ export function getUserInfo() {
   return fetch(`${baseUrl}/users/me`, {
     method: 'GET',
     headers: headers
-  }).then(checkResponse);
+  }).then(handleResponse);
 };
 
 // Получение стартовых карточек
@@ -28,7 +24,7 @@ export function getInitialCards() {
   return fetch(`${baseUrl}/cards`, {
     method: 'GET',
     headers: headers
-  }).then(checkResponse);
+  }).then(handleResponse);
 };
 
 export function addCard(data) {
@@ -39,7 +35,7 @@ export function addCard(data) {
       name: data.name,
       link: data.link
     })
-  }).then(checkResponse);
+  }).then(handleResponse);
 };
 
 export function updateUserInfo({ name, about }) {
@@ -47,28 +43,28 @@ export function updateUserInfo({ name, about }) {
     method: 'PATCH',
     headers: headers,
     body: JSON.stringify({ name, about })
-  }).then(checkResponse);
+  }).then(handleResponse);
 }
 
 export function deleteCardFromServer(cardId) {
   return fetch(`${baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
     headers: headers
-  }).then(checkResponse);
+  }).then(handleResponse);
 }
 
 export function likeCard(cardId) {
   return fetch(`${baseUrl}/cards/likes/${cardId}`, {
     method: 'PUT',
     headers
-  }).then(checkResponse);
+  }).then(handleResponse);
 }
 
 export function unlikeCard(cardId) {
   return fetch(`${baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers
-  }).then(checkResponse);
+  }).then(handleResponse);
 }
 
 export function updateUserAvatar(avatarUrl) {
@@ -76,6 +72,6 @@ export function updateUserAvatar(avatarUrl) {
     method: 'PATCH',
     headers,
     body: JSON.stringify({ avatar: avatarUrl })
-  }).then(checkResponse);
+  }).then(handleResponse);
 }
 
